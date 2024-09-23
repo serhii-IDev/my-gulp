@@ -1,7 +1,6 @@
 body {
-  background-color: black;
+  background-color: rgb(255, 255, 255);
 }
-
 body span {
   color: red;
 }
@@ -10,7 +9,8 @@ body span {
   span {
     color: red;
   }
-
+}
+@media (max-width: 768px) {
   body {
     background-color: aqua;
   }

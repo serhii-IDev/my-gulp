@@ -1,3 +1,4 @@
+/*
 import webp from "gulp-webp";
 import imagemin from "gulp-imagemin";
 
@@ -24,3 +25,4 @@ export const images = () => {
         .pipe(app.gulp.dest(app.path.build.images))
         .pipe(app.plugins.browsersync.stream());
 }
+        */
