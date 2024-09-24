@@ -15,6 +15,7 @@
   "devDependencies": {
     "browser-sync": "latest",
     "del": "latest",
+    "fs": "^0.0.1-security",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
     "gulp-clean-css": "latest",
