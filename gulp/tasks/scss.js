@@ -1,63 +1,55 @@
-import darkSass from 'sass';
+import * as darkSass from 'sass';
 import gulpSass from 'gulp-sass';
 import rename from 'gulp-rename';
 
-import cleanCss from 'gulp-clean-css'; // зжаття css 
-import webpcss from 'gulp-webpcss'; // показ webp зображень 
+import cssnano from 'gulp-cssnano'; // стиснення css 
+import webpcss from 'gulp-webpcss'; // підтримка webp зображень 
 import autoPrefixer from 'gulp-autoprefixer'; // додавання вендорних префіксів
-import groupCssMediaQueries from 'gulp-group-css-media-queries'; // групування медіа запросів
+import groupCssMediaQueries from 'gulp-group-css-media-queries'; // групування медіа запитів
 
+// Ініціалізація Gulp Sass з використанням darkSass
 const sass = gulpSass(darkSass);
 
 export const scss = () => {
-    return app.gulp.src(app.path.src.scss, { sourcemaps: app.isDev})
+    return app.gulp.src(app.path.src.scss, { sourcemaps: app.isDev })
         .pipe(app.plugins.plumber(
             app.plugins.notify.onError({
                 title: "SCSS",
                 message: "Error: <%= error.message %>"
-            })))
+            })
+        ))
         .pipe(app.plugins.replace(/@img\//g, '../img/'))
-        .pipe(sass({
-            outputStyle: 'expanded'
-        }))
+        .pipe(sass({ outputStyle: 'expanded' })) // перший етап - компіляція SCSS у CSS
         .pipe(
             app.plugins.if(
                 app.isBuild,
-                groupCssMediaQueries()
+                groupCssMediaQueries() // групування медіа запитів
             )
         )
         .pipe(
             app.plugins.if(
                 app.isBuild,
-                webpcss(
-                    {
-                        webpClass: ".webp",
-                        noWebpClass: ".no-webp"
-                    }
-                ))
+                webpcss({
+                    webpClass: ".webp",
+                    noWebpClass: ".no-webp"
+                }) // підтримка webp
+            )
         )
         .pipe(
             app.plugins.if(
                 app.isBuild,
                 autoPrefixer({
                     grid: true,
-                    overrideBrowserslist: ["last 3 versions"],
+                    overrideBrowserslist: ["last 3 versions"], // підтримка останніх 3 версій браузерів
                     cascade: true
                 })
             )
         )
-        // Якщо потрібен не зжатий дубль файли стилів 
-        .pipe(app.gulp.dest(app.path.build.css))
+        // Якщо потрібно зберігати не зжаті стилі
+        .pipe(app.gulp.dest(app.path.build.css)) 
         
-        .pipe(
-            app.plugins.if(
-                app.isBuild,
-                cleanCss()
-            )
-        )
-        .pipe(rename({
-            extname: ".min.css"
-        }))
-        .pipe(app.gulp.dest(app.path.build.css))
-        .pipe(app.plugins.browsersync.stream())
-}
+        .pipe(cssnano())  
+        .pipe(rename({ extname: ".min.css" })) // зміна розширення на .min.css після стиснення
+        .pipe(app.gulp.dest(app.path.build.css)) // збереження в кінцеву директорію
+        .pipe(app.plugins.browsersync.stream()); // оновлення браузера в реальному часі
+};

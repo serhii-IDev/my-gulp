@@ -1,18 +1,14 @@
-import webpack from "webpack-stream";
+import gulp from 'gulp';
+import uglify from 'gulp-uglify';
+import concat from 'gulp-concat';
+import rename from 'gulp-rename'; // Для зміни імені файлів
 
 export const js = () => {
-    return app.gulp.src(app.path.src.js, { sourcemaps: app.isDev})
-        .pipe(app.plugins.plumber(
-            app.plugins.notify.onError({
-                title: "JS",
-                message: "Error: <%= error.message %>"
-            })))
-        .pipe(webpack({
-            mode: app.isBuild ? 'production' : 'development',
-            output: {
-                filename: 'app.min.js',
-            }
-        }))
-        .pipe(app.gulp.dest(app.path.build.js))
-        .pipe(app.plugins.browsersync.stream())
-}
+    return gulp.src('src/js/**/*.js')  // Шлях до JavaScript файлів
+    .pipe(concat('main.js'))  // Об'єднання всіх JS файлів в один
+    .pipe(gulp.dest('dist/js'))  // Виведення результату в dist/js (незмінений файл)
+    .pipe(uglify())  // Мінімізація JavaScript
+    .pipe(rename({ suffix: '.min' }))  // Додаємо суфікс .min до імені файлу
+    .pipe(gulp.dest('dist/js'));  // Виведення мінімізованого файлу в dist/js
+};
+
